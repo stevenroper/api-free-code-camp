@@ -1,12 +1,15 @@
 
-var express = require('express');
-var app = express();
+const express = require('express');
+const bodyParser = require('body-parser');
+
+const app = express();
 
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path} - ${req.ip}`);
   next();
 });
-app.use(express.static(__dirname + '/public'))
+app.use(express.static(__dirname + '/public'));
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/views/index.html');
@@ -28,6 +31,14 @@ app.get('/now', (req, res, next) => {
 app.get('/:word/echo', (req, res) => {
   res.send({ echo: req.params.word });
 });
+
+app.route('/name')
+  .get((req, res) => {
+    res.send({ name: `${req.query.first} ${req.query.last}` })
+  })
+  .post((req, res) => {
+    res.send({ name: `${req.body.first} ${req.body.last}` })
+  });
 
 // --> 7)  Mount the Logger middleware here
 
