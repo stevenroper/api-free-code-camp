@@ -2,6 +2,33 @@
 var express = require('express');
 var app = express();
 
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path} - ${req.ip}`);
+  next();
+});
+app.use(express.static(__dirname + '/public'))
+
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/views/index.html');
+});
+
+app.get('/json', (req, res) => {
+  res.json({
+    mesage: 'Hello json',
+  });
+});
+
+app.get('/now', (req, res, next) => {
+  req.time = new Date().toString();
+  next();
+}, (req, res) => {
+  res.send({ time : req.time });
+});
+
+app.get('/:word/echo', (req, res) => {
+  res.send({ echo: req.params.word });
+});
+
 // --> 7)  Mount the Logger middleware here
 
 
@@ -50,7 +77,7 @@ var app = express();
 
 // This would be part of the basic setup of an Express app
 // but to allow FCC to run tests, the server is already active
-/** app.listen(process.env.PORT || 3000 ); */
+app.listen(3000);
 
 //---------- DO NOT EDIT BELOW THIS LINE --------------------
 
